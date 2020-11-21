@@ -1,0 +1,105 @@
+server
+
+    2  2020-11-21 21:04:59man firewalld.richlanguage
+    3  2020-11-21 21:06:45firewall-cmd --permanent --add-rich-rule "rule family="ipv4" source address="192.168.12.0/24" service name="ssh" reject"
+    4  2020-11-21 21:06:56firewall-cmd --reload
+    5  2020-11-21 21:12:59mkdir /nfsdata
+    6  2020-11-21 21:13:06vim /etc/fstab 
+    7  2020-11-21 21:14:06systemctl restart nfs-server
+    8  2020-11-21 21:14:15systemctl enable nfs-server
+    9  2020-11-21 21:14:21mount -av
+   10  2020-11-21 21:14:27df -h
+   11  2020-11-21 21:25:55mkdir /test
+   12  2020-11-21 21:26:58yum install samba-client cifs-utils -y
+   13  2020-11-21 21:27:48vim /etc/fstab 
+   14  2020-11-21 21:28:04mount -av
+   15  2020-11-21 21:28:06df -h
+   16  2020-11-21 21:28:47mkdir /dokyard
+   19  2020-11-21 21:37:56semanage fcontext -a -t samba_share_t "/dokyard(/.*)?"
+   20  2020-11-21 21:38:15restorecon -Rv /dokyard/
+   21  2020-11-21 21:38:24ls -Zd /dokyard/
+   22  2020-11-21 21:38:40useradd mitchel
+   23  2020-11-21 21:38:48useradd catherine
+   24  2020-11-21 21:39:22smbpasswd -a mitchel
+   25  2020-11-21 21:39:35smbpasswd -a catherine
+   26  2020-11-21 21:40:18setfacl -m u:mitchel:rwx /dokyard/
+   27  2020-11-21 21:40:22setfacl -m u:mitchel:r-x /dokyard/
+   28  2020-11-21 21:40:36firewall-cmd --permanent --add-service=samba
+   29  2020-11-21 21:40:47firewall-cmd --reload 
+   30  2020-11-21 21:44:58getsebool -a | grep samba
+   31  2020-11-21 21:45:10setsebool -P samba_export_all_ro on
+   32  2020-11-21 21:45:28setsebool -P samba_export_all_rw on
+   33  2020-11-21 21:46:19systemctl restart smb nmb
+   34  2020-11-21 21:46:26systemctl enable smb nmb
+   35  2020-11-21 21:46:35vim /etc/samba/smb.conf
+   36  2020-11-21 21:50:25systemctl restart smb nmb
+   37  2020-11-21 21:50:28systemctl enable smb nmb
+   38  2020-11-21 21:54:37yum install httpd -y
+   39  2020-11-21 21:55:16echo "hello from wwb hosting"> /var/www/html/index.html
+   40  2020-11-21 21:56:20cp /usr/share/doc/httpd/httpd-vhosts.conf /etc/httpd/conf.d/one.conf
+   41  2020-11-21 21:56:23vim /etc/httpd/conf.d/one.conf
+   42  2020-11-21 21:58:32systemctl restart httpd
+   43  2020-11-21 21:58:42systemctl enable httpd
+   44  2020-11-21 21:58:53curl www.example.com
+   45  2020-11-21 21:59:42mkdir /var/www/practice
+   46  2020-11-21 22:00:05echo "Hello from virtual hosting"> /var/www/practice/index.html
+   47  2020-11-21 22:00:25cp /etc/httpd/conf.d/one.conf /etc/httpd/conf.d/two.conf
+   48  2020-11-21 22:00:28vim /etc/httpd/conf.d/two.conf
+   49  2020-11-21 22:01:34firewall-cmd --permanent --add-service=http
+   50  2020-11-21 22:01:44firewall-cmd --reload
+   51  2020-11-21 22:01:55systemctl restart httpd
+   52  2020-11-21 22:01:59systemctl enable httpd
+   53  2020-11-21 22:02:07curl server.example.com
+   54  2020-11-21 22:06:11mkdir /var/www/html/notes
+   55  2020-11-21 22:06:27touch file1 /var/www/html/notes
+   56  2020-11-21 22:06:36vim /etc/httpd/conf.d/one.conf 
+   57  2020-11-21 22:08:04systemctl restart httpd
+   58  2020-11-21 22:08:11systemctl enable httpd
+   59  2020-11-21 22:09:56touch /var/www/html/notes/myfile1
+   60  2020-11-21 22:10:00systemctl restart httpd
+   61  2020-11-21 22:10:03systemctl enable httpd
+   62  2020-11-21 22:13:21yum install openssl
+   63  2020-11-21 22:14:59openssl genrsa -out server.key 2048
+   64  2020-11-21 22:15:45openssl req -newb -key server.key -out server.csr
+   65  2020-11-21 22:15:51openssl req -new -key server.key -out server.csr
+   66  2020-11-21 22:17:20openssl X509 -req -in server.csr -sign key server.key -days 365 -out server.crt
+   67  2020-11-21 22:17:27openssl x509 -req -in server.csr -sign key server.key -days 365 -out server.crt
+   68  2020-11-21 22:17:37openssl x509 -req -in server.csr -signkey server.key -days 365 -out server.crt
+   69  2020-11-21 22:17:41ls
+   70  2020-11-21 22:19:58yum install mod_ssl -y
+   71  2020-11-21 22:22:03cp /etc/httpd/conf.d/ssl.conf /etc/httpd/conf.d/myssl.conf 
+   72  2020-11-21 22:22:05vim /etc/httpd/conf.d/myssl.conf
+   73  2020-11-21 22:24:14cp server.key /etc/pki/tls/private/server.key
+   74  2020-11-21 22:24:32cp server.crt /etc/pki/tls/certs/server.crt
+   75  2020-11-21 22:24:51systemctl restart httpd
+   76  2020-11-21 22:25:01systemctl enable httpd
+   77  2020-11-21 22:25:50curl -k https://server.example.com
+   78  2020-11-21 22:26:50lsblk
+   79  2020-11-21 22:29:25systemctl restart target
+   80  2020-11-21 22:29:32systemctl enable target
+   81  2020-11-21 22:29:50targetcli
+   83  2020-11-21 22:51:37firewall-cmd --permanent --add-port=3260/tcp
+   84  2020-11-21 22:51:46firewall-cmd --reload
+   86  2020-11-21 22:55:13vim /root/condition.sh
+   87  2020-11-21 23:00:39sh condition.sh 
+   90  2020-11-21 23:01:08sh condition.sh Linux
+   91  2020-11-21 23:01:14sh condition.sh Fedora
+   94  2020-11-21 23:02:37vim /root/usersauto
+   95  2020-11-21 23:07:50cat >testfile
+   97  2020-11-21 23:08:56sh /root/usersauto
+   98  2020-11-21 23:09:06sh /root/usersauto testf
+   99  2020-11-21 23:09:09sh /root/usersauto testfile
+  100  2020-11-21 23:09:14vim /root/usersauto
+  101  2020-11-21 23:09:29sh /root/usersauto testfile
+  102  2020-11-21 23:09:31vim /root/usersauto
+  103  2020-11-21 23:10:05sh /root/usersauto testfile
+  104  2020-11-21 23:10:15cat /etc/passwd
+  107  2020-11-21 23:13:31firewall-cmd --permanent --add-rich-rule "rule family="ipv4" source address="192.168.83.139" forward-port to-port="80" protocol="tcp" port="5343""
+  108  2020-11-21 23:13:38firewall-cmd --reload
+  109  2020-11-21 23:13:47firewall-cmd --list-all
+  110  2020-11-21 23:14:15firewall-cmd --permanent --add-port=5343/tcp
+  111  2020-11-21 23:14:27firewall-cmd --reload 
+  112  2020-11-21 23:14:35systemctl restart httpd
+  113  2020-11-21 23:20:39vim /etc/bashrc
+  114  2020-11-21 23:20:50. ~/.bashrc 
+  115  2020-11-21 23:20:54qstat
