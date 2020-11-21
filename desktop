@@ -1,0 +1,47 @@
+desktop
+
+  121  firewall-cmd --permanent --add-rich-rule "rule family="ipv4" source address="192.168.12.0/24" service name="ssh" reject"
+  122  firewall-cmd --reload 
+  123  export HISTTIMEFORMAT='%F %T'
+  124  mkdir /tmp/mynfs
+  125  yum install nfs-utils -y
+  126  vim /etc/exports
+  127  systemctl restart nfs-server
+  128  systemctl enable nfs-server
+  129  firewall-cmd --permanent --add-service=nfs
+  130  firewall-cmd --reload 
+  131  yum install samba samba-client -y
+  132  mkdir /concert
+  133  semanage fcontext -a -t samba_share_t "/concert(/.*)?"
+  134  restorecon -Rv /concert/
+  135  ls -zd /concert/
+  136  ls -Zd /concert/
+  137  vim /etc/samba/smb.conf
+  138  firewall-cmd --permanent --add-service=samba
+  139  firewall-cmd --reload 
+  140  systemctl restart smb nmb
+  141  systemctl enable smb nmb
+  142  useradd samual
+  143  smbpasswd -a samual
+  144  setfacl -m u:samual:r-x /concert/
+  145  systemctl restart smb nmb
+  146  systemctl enable smb nmb
+  147  mkdir /mnt/akon
+  148  vim /etc/fstab 
+  149  cat > /root/sec
+  150  cat /root/sec 
+  151  chmod 600 /root/sec
+  152  mount -av
+  153  df -h
+  154  history
+  155  df -h
+  156  mkdir /shareddisk
+  157  yum install iscsi-initiator-utils -y
+  158  vim /etc/iscsi/initiatorname.iscsi 
+  159  man iscsiadm 
+  161  man iscsiadm 
+  163  systemctl restart iscsi iscsid
+  164  systemctl enable iscsi iscsid
+  170  iscsiadm   --mode   discoverydb   --type   sendtargets  --portal 192.168.83.138 --discover
+  171  iscsiadm  --mode  node   --targetname iqn.2017-18.com.example.netowrk:system2 --portal 192.168.83.138:3260 --login
+  172  systemctl restart iscsi iscsid
